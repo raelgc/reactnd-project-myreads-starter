@@ -129,7 +129,7 @@ body, .app {
 .book-title {
   margin-top: 10px;
 }
-.book-authors {
+.book-authors, .shelf-empty {
   color: #999;
 }
 
