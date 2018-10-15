@@ -18,7 +18,7 @@ export default class Search extends Component {
 
 	onSearch = (q, shelves) => {
 		BooksAPI.search(q.trim()).then((books) => {
-			if (!books.error){
+			if (Array.isArray(books)){
 				books.map(book => {
 					const shelf = shelves.find(shelf => shelf.books.find(b => book.id === b.id));
 					if (shelf) {
