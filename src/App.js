@@ -21,7 +21,7 @@ export default class BooksApp extends React.Component {
     const { shelves } = this.state;
     BooksAPI.getAll().then((books) => {
       books.map(book => shelves.find(shelf => shelf.id === book.shelf).books.push(book));
-      this.setState({ shelves }, () => { console.log(shelves)});
+      this.setState({ shelves });
     });
   }
 
