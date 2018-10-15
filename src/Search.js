@@ -3,9 +3,6 @@ import { Link } from 'react-router-dom'
 import * as BooksAPI from './BooksAPI'
 import Shelf from './components/Shelf'
 
-// Avoid sending every user keytype to the search API and produce weird results
-let searchTimer = null
-
 /**
 	The search from BooksAPI is limited to a particular set of search terms.
 	You can find these search terms here:
@@ -20,25 +17,20 @@ export default class Search extends Component {
 	}
 
 	onSearch = (q, shelves) => {
-		if (searchTimer != null) {
-			clearTimeout(searchTimer);
-		}
-		searchTimer = setTimeout(() => {
-			BooksAPI.search(q.trim()).then((books) => {
-				if (!books.error){
-					books.map(book => {
-						const shelf = shelves.find(shelf => shelf.books.find(b => book.id === b.id));
-						if (shelf) {
-							book.shelf = shelf.id;
-						}
-						return book;
-					})
-					this.setState((state) => ({ shelf: { ...state.shelf, books } } ));
-				} else {
-					this.setState((state) => ({ shelf: { ...state.shelf, books: [] } } ));
-				}
-			});
-		}, 400);
+		BooksAPI.search(q.trim()).then((books) => {
+			if (!books.error){
+				books.map(book => {
+					const shelf = shelves.find(shelf => shelf.books.find(b => book.id === b.id));
+					if (shelf) {
+						book.shelf = shelf.id;
+					}
+					return book;
+				})
+				this.setState((state) => ({ shelf: { ...state.shelf, books } } ));
+			} else {
+				this.setState((state) => ({ shelf: { ...state.shelf, books: [] } } ));
+			}
+		});
 	}
 
 	render() {

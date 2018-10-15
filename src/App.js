@@ -1,5 +1,6 @@
 import React from 'react'
 import { Route } from 'react-router-dom'
+import * as BooksAPI from './BooksAPI'
 import './App.css'
 import Library from './Library'
 import Search from './Search'
@@ -16,9 +17,17 @@ export default class BooksApp extends React.Component {
     ]
   }
 
+  componentDidMount() {
+    const { shelves } = this.state;
+    BooksAPI.getAll().then((books) => {
+      books.map(book => shelves.find(shelf => shelf.id === book.shelf).books.push(book));
+      this.setState({ shelves }, () => { console.log(shelves)});
+    });
+  }
+
   removeBookFromCurrentShelf = (book) => {
     const shelf = this.state.shelves.find((s) => s.id === book.shelf);
-    shelf.books.splice(shelf.books.find(b => book.id === b.id), 1);
+    shelf.books = shelf.books.filter(b => book.id !== b.id);
   }
 
   moveToShelf = (shelf_id, book) => {
@@ -33,7 +42,9 @@ export default class BooksApp extends React.Component {
     if (shelf_id !== 'none') {
       this.moveToShelf(shelf_id, book);
     }
-    this.setState((state) => ({ shelves: [...state.shelves] }));
+    BooksAPI.update(book, shelf_id).then(() =>
+      this.setState((state) => ({ shelves: [...state.shelves] }))
+    );
   }
 
   render() {
